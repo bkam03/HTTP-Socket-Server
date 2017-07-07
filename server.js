@@ -14,41 +14,29 @@ myServer.listen( 8080, function(){
       let requestMethod = chunkAsArray[ 0 ];
       let requestPath = `.${ chunkAsArray[ 1 ] }`;
       var htmlBody = '';
+      var statusCode = '';
 
-      console.log( requestPath + '\n' );
-      //try {
+      if( requestMethod === 'GET' ){
+        console.log( requestPath + '\n' );
+
+        let date = new Date().toUTCString();
+        console.log( socket );
         fs.readFile( requestPath, 'utf8', ( err, data ) => {
           if( err ){
-            console.log( 'error' );
             fs.readFile( './404.html', 'utf8', ( err, errorSite ) => {
-              console.log( errorSite );
+              statusCode = 'HTTP/1.1 404 NOT FOUND';
               htmlBody = errorSite;
-              generateReturn();
+              socket.write( `${ statusCode }\nServer: testServer\nDate: ${ date }\n\n${htmlBody }` );
+              socket.end();
             } );
           } else {
-            console.log( 'no error' );
+            statusCode = 'HTTP/1.1 200 OK';
             htmlBody = data;
-            generateReturn();
-          }
-
-          //console.log( `-${ htmlBody }-` );
-
-
-          //let date = new Date().toUTCString();
-          function generateReturn(){
-            let date = new Date().toUTCString();
-            socket.write( `HTTP/1.1 200 OK\nServer: testServer\nDate: ${ date }\n\n${htmlBody}` );
-
+            socket.write( `${ statusCode }\nServer: testServer\nDate: ${ date }\n\n${htmlBody }` );
             socket.end();
-
           }
-
-          //socket.write( `HTTP/1.1 200 OK\nServer: testServer\nDate: ${ date }\n\n${ htmlBody }` );
-
-          //socket.end();
        } );
+      }
     } );
   } );
-
-  //if path is not found in routes, return a 404 and output some text/html content
 } );
