@@ -12,18 +12,24 @@ myServer.listen( 8080, function(){
       console.log( chunk );
       let chunkAsArray = chunk.split( ' ' );
       let requestMethod = chunkAsArray[ 0 ];
-      let requestPath = chunkAsArray[ 1 ];
+      let requestPath = `.${ chunkAsArray[ 1 ] }`;
 
-      console.log( requestMethod, requestPath );
+      var htmlBody = '';
       //read input
-
+      console.log( requestPath );
+      fs.readFile( requestPath, ( err, data ) => {
+        if( err ) throw err;
+        console.log( `@${ data }` );
+        htmlBody = data;
+        console.log( htmlBody );
+      } );
 
 
 
       //output
 
       let date = new Date().toUTCString();
-      let htmlBody = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Document</title></head><body></body></html>';
+
 
       socket.write( `HTTP/1.1 200 OK\nServer: testServer\nDate: ${ date }\n\n${ htmlBody }` );
 
