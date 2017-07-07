@@ -19,23 +19,33 @@ myServer.listen( 8080, function(){
       //try {
         fs.readFile( requestPath, 'utf8', ( err, data ) => {
           if( err ){
+            console.log( 'error' );
             fs.readFile( './404.html', 'utf8', ( err, errorSite ) => {
+              console.log( errorSite );
               htmlBody = errorSite;
+              generateReturn();
             } );
           } else {
+            console.log( 'no error' );
             htmlBody = data;
+            generateReturn();
           }
 
-          console.log( `-${ htmlBody }-` );
+          //console.log( `-${ htmlBody }-` );
 
 
-          let date = new Date().toUTCString();
+          //let date = new Date().toUTCString();
+          function generateReturn(){
+            let date = new Date().toUTCString();
+            socket.write( `HTTP/1.1 200 OK\nServer: testServer\nDate: ${ date }\n\n${htmlBody}` );
 
+            socket.end();
 
-          socket.write( `HTTP/1.1 200 OK\nServer: testServer\nDate: ${ date }\n\n${htmlBody}` );
+          }
+
           //socket.write( `HTTP/1.1 200 OK\nServer: testServer\nDate: ${ date }\n\n${ htmlBody }` );
 
-          socket.end();
+          //socket.end();
        } );
     } );
   } );
