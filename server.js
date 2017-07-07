@@ -12,7 +12,11 @@ myServer.listen( 8080, function(){
       var date = new Date().toUTCString();
       console.log( date );
 
-      socket.write( `HTTP/1.1 200 OK\nServer: testServer\nDate: ${ date }\n\n<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Document</title></head><body></body></html>` );
+      socket.write( `HTTP/1.1 200 OK\n
+                    Server: testServer\n
+                    Date: ${ date }\n\n
+
+                    <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Document</title></head><body></body></html>` );
 
       socket.end();
     } );
