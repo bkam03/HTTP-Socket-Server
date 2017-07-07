@@ -20,7 +20,7 @@ myServer.listen( 8080, function(){
         console.log( requestPath + '\n' );
 
         let date = new Date().toUTCString();
-        console.log( socket );
+
         fs.readFile( requestPath, 'utf8', ( err, data ) => {
           if( err ){
             fs.readFile( './404.html', 'utf8', ( err, errorSite ) => {
