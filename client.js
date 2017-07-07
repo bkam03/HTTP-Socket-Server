@@ -13,23 +13,26 @@ node client.js www.devleague.com
 const net = require( 'net' );
 const process = require( 'process' );
 
-let host = 'www.google.com';//process.argv[ 2 ];
+let host = process.argv[ 2 ];
+console.log( host );
 
 
-var client = net.createConnection( 80, host, function(){
-  client.setEncoding( 'utf8' );
-  //console.log( `-${ host }-` );
+if( host == undefined ){
+    console.log( 'help/usage message' );
+} else {
+  console.log( 'in the else' );
+  var client = net.createConnection( 80, host, function(){
+    console.log( 'in the client' );
+    client.setEncoding( 'utf8' );
 
-  //connects, then sends request
-  //client.write( `GET / HTTP/1.1\r\nHost: ${ host }` );
-  //waits to receive data, then exits
-  client.on( 'data', function( data ){
-    console.log( data );
-    client.end();
+    client.on( 'data', function( data ){
+      console.log( data );
+      client.end();
+    } );
+    client.write( 'GET / HTTP/1.1\r\n\r\n' );
   } );
 
-  client.write( 'GET / HTTP/1.1\r\n\r\n' );
-  //client.write( 'GET / HTTP/1.1\r\nHost: www.example.com\r\nConnection: close\r\n\r\n' );
-  //client.write( 'GET / HTTP/1.1\r\nHost: ${ host }\r\n\r\n' );
+    //client.write( 'GET / HTTP/1.1\r\nHost: www.example.com\r\nConnection: close\r\n\r\n' );
+}
 
-} );
+
