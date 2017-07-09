@@ -18,18 +18,19 @@ if( host === undefined ){
     client.on( 'data', function( data ){
 
       let headerEndPosition = data.indexOf( '<' );
-      let header = data.slice( 0, headerEndPosition );
+      let header = data.slice( 0, headerEndPosition ); //separate header from body
       let htmlBody = data.slice( headerEndPosition );
+
       let headerKeyPairs = header.split( '\r\n' );
-      headerEndPosition = headerKeyPairs.indexOf( '' );
+      headerEndPosition = headerKeyPairs.indexOf( '' ); //grab just keyvalue pairs in header
       headerKeyPairs.splice( headerEndPosition );
 
-      let statusLine = headerKeyPairs.shift();
+      let statusLine = headerKeyPairs.shift();  //grab status line from header
       if( statusLine !== undefined ){
         statusCode = statusLine.split( ' ' )[ 1 ];
       }
 
-      for( var i = 0; i < headerKeyPairs.length; i++ ){
+      for( var i = 0; i < headerKeyPairs.length; i++ ){ //make header into key value pairs
         let keyPairArray = headerKeyPairs[ i ].split( ': ' );
         headerProperties[ keyPairArray[ 0 ] ] = keyPairArray[ 1 ];
       }
