@@ -6,6 +6,7 @@ var url = process.argv[ 2 ].split( '/' );
 var host = url[ 0 ];
 var uri = url[ 1 ];
 var headerProperties = {};
+var statusCode = 0;
 
 
 if( host === undefined ){
@@ -15,28 +16,29 @@ if( host === undefined ){
     client.setEncoding( 'utf8' );
 
     client.on( 'data', function( data ){
-      headerArray = data.split('\n');
-      //console.log( headerArray );
-      for( var i = 1; i < headerArray.length; i++ ){
-        let keyPairArray = headerArray[ i ].split( ' ' );
-        let key = keyPairArray[ 0 ];
-        key = key.slice( 0, key.length - 1 );
-        let property = keyPairArray[ 1 ];
-        headerProperties[ key ] = keyPairArray[ 1 ];
+
+      let headerEndPosition = data.indexOf( '<' );
+      let header = data.slice( 0, headerEndPosition );
+      let htmlBody = data.slice( headerEndPosition );
+      let headerKeyPairs = header.split( '\r\n' );
+      headerEndPosition = headerKeyPairs.indexOf( '' );
+      headerKeyPairs.splice( headerEndPosition );
+
+      let statusLine = headerKeyPairs.shift();
+      if( statusLine !== undefined ){
+        statusCode = statusLine.split( ' ' )[ 1 ];
       }
 
-      let htmlBody = data.split( '\r\n\r\n' )[ 1 ];
-      //console.log( `@@${ htmlBody }` );
-      //let htmlBody = data;
-      process.stdout.write( htmlBody.toString() );
-      //client.end();
+      for( var i = 0; i < headerKeyPairs.length; i++ ){
+        let keyPairArray = headerKeyPairs[ i ].split( ': ' );
+        headerProperties[ keyPairArray[ 0 ] ] = keyPairArray[ 1 ];
+      }
+
+      process.stdout.write( htmlBody );
     } );
 
     let date = new Date().toUTCString();
 
     client.write( `GET / HTTP/1.1\r\nHost: ${ host }\r\nDate: ${ date }\r\nUser-Agent: Poor Man Browser\r\nConnection: close\r\n\r\n` );
-    //client.write( 'GET /${ uri } HTTP/1.1\r\n\r\n' );
   } );
 }
-
-
