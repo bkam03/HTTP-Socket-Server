@@ -2,15 +2,33 @@
 const net = require( 'net' );
 const process = require( 'process' );
 
-var url = process.argv[ 2 ].split( '/' );
-var host = url[ 0 ];
-var uri = url[ 1 ];
+var method = 'GET';
+var url = '';
+var host = '';
+var uri = '';
+var options = '';
 var headerProperties = {};
 var statusCode = 0;
 
 
+if( process.argv.length === 4 ){
+  url = process.argv[ 3 ].split( '/' );
+  host = url[ 0 ];
+  uri = url[ 1 ];
+  options = process.argv[ 2 ];
+} else if( process.argv.length === 3 ) {
+  url = process.argv[ 2 ].split( '/' );
+  host = url[ 0 ];
+  uri = url[ 1 ];
+} else {
+  throw error;
+}
+
+console.log( options );
+
+
 if( host === undefined ){
-    console.log( 'type "node client.js urlThingHere" for the client to access that website.' );
+    console.log( 'node client.js [-options] targetUrl' );
 } else {
   var client = net.createConnection( 80, host, function(){
     client.setEncoding( 'utf8' );
@@ -40,6 +58,8 @@ if( host === undefined ){
 
     let date = new Date().toUTCString();
 
-    client.write( `GET / HTTP/1.1\r\nHost: ${ host }\r\nDate: ${ date }\r\nUser-Agent: Poor Man Browser\r\nConnection: close\r\n\r\n` );
+
+
+    client.write( `${ method } / HTTP/1.1\r\nHost: ${ host }\r\nDate: ${ date }\r\nUser-Agent: Poor Man Browser\r\nConnection: close\r\n\r\n` );
   } );
 }
